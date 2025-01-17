@@ -1,18 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Feather, FontAwesome6 } from "@expo/vector-icons";
 
-import { ForecastDay, Location } from "../../api/Types";
+import { ForecastDay, Location, Weather } from "../../api/Types";
 import { getDayForecast } from "../../api/Entities/Weather";
 import ForecastItem from "./ForecastItem";
 import Colors from "../../constants/colors";
+import Widget from "../UI/Widget";
+import AppText from "../UI/AppText";
 
 interface ForecastProps {
   location: Location;
   onExpanded: (isExpanded: boolean) => void;
+  weather?: Weather;
 }
 
-const Forecast: React.FC<ForecastProps> = ({ location, onExpanded }) => {
+const Forecast: React.FC<ForecastProps> = ({
+  location,
+  weather,
+  onExpanded,
+}) => {
   const [forecast, setForecast] = useState<ForecastDay>({ hour: [] });
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -56,11 +63,65 @@ const Forecast: React.FC<ForecastProps> = ({ location, onExpanded }) => {
             />
           </View>
         </Pressable>
-        <ScrollView horizontal>
-          {forecast.hour.map((hour) => (
-            <ForecastItem hour={hour} key={hour.time} />
-          ))}
-        </ScrollView>
+        <View style={styles.wrapper}>
+          <ScrollView horizontal>
+            {forecast.hour.map((hour) => (
+              <ForecastItem hour={hour} key={hour.time} />
+            ))}
+          </ScrollView>
+        </View>
+        {isExpanded && weather ? (
+          <View style={styles.widgetsWrapper}>
+            <View style={styles.widgets}>
+              <Widget
+                title="Feels like"
+                icon={
+                  <FontAwesome6
+                    name="temperature-low"
+                    size={16}
+                    color={Colors.gray100}
+                  />
+                }
+                value={Math.round(weather.feelslike_c)}
+                unit="°C"
+              />
+              <Widget
+                title="Humidity"
+                icon={
+                  <Ionicons
+                    name="water-outline"
+                    size={16}
+                    color={Colors.gray100}
+                  />
+                }
+                value={weather.humidity}
+                unit="%"
+              />
+            </View>
+            <View style={styles.widgets}>
+              <Widget
+                title="Wind"
+                icon={<Feather name="wind" size={16} color={Colors.gray100} />}
+                value={Number((weather.wind_kph / 3.6).toFixed(1))}
+                unit="m/s"
+              />
+              <Widget
+                title="Air pressure"
+                icon={
+                  <FontAwesome6
+                    name="arrows-down-to-line"
+                    size={16}
+                    color={Colors.gray100}
+                  />
+                }
+                value={weather.pressure_mb * 0.75}
+                unit="psi"
+              />
+            </View>
+          </View>
+        ) : (
+          <AppText style={styles.hint}>Expand to see more details</AppText>
+        )}
       </View>
     </View>
   );
@@ -90,5 +151,19 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.5,
+  },
+  wrapper: {
+    height: 150,
+  },
+  hint: {
+    fontSize: 16,
+    marginTop: 40,
+  },
+  widgetsWrapper: {
+    marginTop: 12,
+    width: "100%",
+  },
+  widgets: {
+    flexDirection: "row",
   },
 });

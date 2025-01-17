@@ -16,11 +16,12 @@ interface Condition {
 
 export interface Weather {
   temp_c: number; // Temperature in celsius
+  feelslike_c: number;
   is_day: number; // 1 = Yes 0 = No
   condition: Condition;
   wind_kph: number;
-  pressure_mb: number; // Pressure in millibars
   humidity: number;
+  pressure_mb: number;
 }
 
 export interface Forecast {

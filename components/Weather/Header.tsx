@@ -11,11 +11,13 @@ import { AppDispatch } from "../../store";
 interface WeatherHeaderProps {
   location: Location;
   isExpanded: boolean;
+  onWeatherChanged: (weather: Weather) => void;
 }
 
 const WeatherHeader: React.FC<WeatherHeaderProps> = ({
   location,
   isExpanded,
+  onWeatherChanged,
 }) => {
   const [currentWather, setCurrentWeather] = useState<Weather>();
   const dispatch: AppDispatch = useDispatch();
@@ -35,6 +37,7 @@ const WeatherHeader: React.FC<WeatherHeaderProps> = ({
       const weather: Weather = await getCurrentWeather(location.city);
       dispatch(setIsDay({ isDay: !!weather.is_day }));
       setCurrentWeather(weather);
+      onWeatherChanged(weather);
     } catch (error) {
       //   console.log("error", error);
     }

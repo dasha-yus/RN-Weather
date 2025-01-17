@@ -8,11 +8,13 @@ import LoadingOverlay from "../components/UI/LoadingOverlay";
 import WeatherHeader from "../components/Weather/Header";
 import { WeatherState } from "../store/reducers/weather";
 import Forecast from "../components/Weather/Forecast";
+import { Weather } from "../api/Types";
 
 const WeatherScreen = () => {
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState<any>();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [weather, setWeather] = useState<Weather>();
 
   const { isDay } = useSelector(
     (state: { weather: WeatherState }) => state.weather
@@ -64,12 +66,17 @@ const WeatherScreen = () => {
       style={styles.image}
     >
       <View style={styles.wrapper}>
-        <View style={[styles.block, { height: isExpanded ? '30%' : '50%' }]}>
-          <WeatherHeader location={location} isExpanded={isExpanded} />
+        <View style={[styles.block, { height: isExpanded ? "30%" : "50%" }]}>
+          <WeatherHeader
+            location={location}
+            isExpanded={isExpanded}
+            onWeatherChanged={(weather) => setWeather(weather)}
+          />
         </View>
         <View style={styles.block}>
           <Forecast
             location={location}
+            weather={weather}
             onExpanded={(val) => setIsExpanded(val)}
           />
         </View>
