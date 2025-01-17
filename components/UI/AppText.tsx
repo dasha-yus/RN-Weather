@@ -3,7 +3,7 @@ import { Text, StyleSheet } from "react-native";
 
 interface AppTextProps {
   children: React.ReactNode;
-  style: object;
+  style?: object;
 }
 
 const AppText: React.FC<AppTextProps> = ({ children, style }) => {

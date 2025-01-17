@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, ImageBackground, View } from "react-native";
+import { StyleSheet, ImageBackground, View, Dimensions } from "react-native";
 import * as Location from "expo-location";
 import { useSelector } from "react-redux";
 
@@ -7,10 +7,12 @@ import { getZoneForCountry } from "../utils/Date";
 import LoadingOverlay from "../components/UI/LoadingOverlay";
 import WeatherHeader from "../components/Weather/Header";
 import { WeatherState } from "../store/reducers/weather";
+import Forecast from "../components/Weather/Forecast";
 
 const WeatherScreen = () => {
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState<any>();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const { isDay } = useSelector(
     (state: { weather: WeatherState }) => state.weather
@@ -62,10 +64,15 @@ const WeatherScreen = () => {
       style={styles.image}
     >
       <View style={styles.wrapper}>
-        <View style={styles.block}>
-          <WeatherHeader location={location} />
+        <View style={[styles.block, { height: isExpanded ? '30%' : '50%' }]}>
+          <WeatherHeader location={location} isExpanded={isExpanded} />
         </View>
-        <View style={styles.block}></View>
+        <View style={styles.block}>
+          <Forecast
+            location={location}
+            onExpanded={(val) => setIsExpanded(val)}
+          />
+        </View>
       </View>
     </ImageBackground>
   );
@@ -80,6 +87,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     justifyContent: "space-between",
+    height: Dimensions.get("window").height,
   },
   block: {
     height: "50%",

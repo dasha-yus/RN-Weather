@@ -8,15 +8,27 @@ export interface Location {
   localTime: string;
 }
 
+interface Condition {
+  text: string;
+  icon: string;
+  code: number;
+}
+
 export interface Weather {
   temp_c: number; // Temperature in celsius
   is_day: number; // 1 = Yes 0 = No
-  condition: {
-    text: string;
-    icon: string;
-    code: number;
-  };
+  condition: Condition;
   wind_kph: number;
   pressure_mb: number; // Pressure in millibars
   humidity: number;
+}
+
+export interface Forecast {
+  time: string;
+  temp_c: number;
+  condition: Condition;
+}
+
+export interface ForecastDay {
+  hour: Array<Forecast>;
 }

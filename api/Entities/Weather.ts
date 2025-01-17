@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { Weather } from "../Types";
+import { ForecastDay, Weather } from "../Types";
 
 const AxiosInstance = axios.create({
   baseURL: process.env.EXPO_PUBLIC_WEATHER_API_BASE_URL,
@@ -14,4 +14,15 @@ export const getCurrentWeather = async (city: string): Promise<Weather> => {
     },
   });
   return res.data?.current;
+};
+
+export const getDayForecast = async (city: string): Promise<ForecastDay> => {
+  const res = await AxiosInstance.get("/forecast.json", {
+    params: {
+      q: city,
+      days: 2,
+      alerts: "no",
+    },
+  });
+  return res.data?.forecast?.forecastday?.[0];
 };

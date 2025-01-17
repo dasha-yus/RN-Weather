@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import AppText from "../UI/AppText";
 import { Location, Weather } from "../../api/Types";
 import { getCurrentWeather } from "../../api/Entities/Weather";
-import { setIsDay } from "../../store/reducers/weather";
+import { setIsDay, WeatherState } from "../../store/reducers/weather";
 import { AppDispatch } from "../../store";
 
 interface WeatherHeaderProps {
   location: Location;
+  isExpanded: boolean;
 }
 
-const WeatherHeader: React.FC<WeatherHeaderProps> = ({ location }) => {
+const WeatherHeader: React.FC<WeatherHeaderProps> = ({
+  location,
+  isExpanded,
+}) => {
   const [currentWather, setCurrentWeather] = useState<Weather>();
   const dispatch: AppDispatch = useDispatch();
+  const { isDay } = useSelector(
+    (state: { weather: WeatherState }) => state.weather
+  );
 
   useEffect(() => {
     if (!location) {
@@ -34,11 +41,13 @@ const WeatherHeader: React.FC<WeatherHeaderProps> = ({ location }) => {
   };
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { marginTop: isExpanded ? 0 : 40 }]}>
       <AppText
         style={[
-          styles.city,
-          { color: currentWather?.is_day ? "#000" : "#fff" },
+          {
+            color: isDay ? "#000" : "#fff",
+            fontSize: isExpanded ? 26 : 42,
+          },
         ]}
       >
         {location?.city}
@@ -48,16 +57,19 @@ const WeatherHeader: React.FC<WeatherHeaderProps> = ({ location }) => {
           <AppText
             style={[
               styles.degrees,
-              { color: currentWather.is_day ? "#000" : "#fff" },
+              {
+                color: isDay ? "#000" : "#fff",
+                fontSize: isExpanded ? 64 : 100,
+              },
             ]}
           >
             {Math.round(currentWather?.temp_c)}&#8451;
           </AppText>
           <AppText
-            style={[
-              styles.weather,
-              { color: currentWather.is_day ? "#000" : "#fff" },
-            ]}
+            style={{
+              color: isDay ? "#000" : "#fff",
+              fontSize: isExpanded ? 20 : 24,
+            }}
           >
             {currentWather.condition.text}
           </AppText>
@@ -72,16 +84,8 @@ export default WeatherHeader;
 const styles = StyleSheet.create({
   header: {
     alignItems: "center",
-    marginTop: 40,
-  },
-  city: {
-    fontSize: 42,
   },
   degrees: {
-    fontSize: 100,
     fontFamily: "open-sans-bold",
-  },
-  weather: {
-    fontSize: 24,
   },
 });
